@@ -12,7 +12,7 @@ namespace HelloDungeon
         bool gameOver = false;
         float health = 20;
         bool playerIsAlive = true;
-        string input = "";
+        int input = 0;
         /// <summary>
         /// The starting room where the player gives their name, and has their first encounter.
         /// </summary>
@@ -28,24 +28,25 @@ namespace HelloDungeon
             Console.Clear();
 
             //Display text for the first encounter, and store the players decision
-            input = GetInput("You've been approached by a traveler!! They offer you a potion. Do you accept?", "No", "Yes");
-
+            input = GetInput("You've been approached by a traveler!! They offer you a potion. Do you accept?", "Yes", "No");
+            
             //If the player drinks the potion...
             
-            while (input != "1" && input != "2")
-            if (input == "1")
+            
+            if (input == 1) 
             {
                 //...kill the player
                 Console.WriteLine("It was posion!! Ya dead shuuuunnnnn");
                 playerIsAlive = false;
+                    
             }
             //Otherwise if they do not...
-            else if (input == "2")
+            else if (input == 2)
             {
                 //...display text to let the player know that they survived the first room
                 Console.WriteLine("You decide to follow your gut and decline. You move on to the next area.");
             }
-            currentArea = 2;
+            
             
         }
 
@@ -55,13 +56,13 @@ namespace HelloDungeon
         void Room2()
         {
             int numberOfAttempts = 4;
-            string input = "";
+            string inputReceived = "";
 
             //Loop until the player gets the riddle right or they run out of tries
-            for (int i = 0; i < numberOfAttempts; i--)
+            for (int i = 1; i <= numberOfAttempts; i++)
             {
                 Console.Clear();
-            }
+
 
                 //Draws monkey character 
                 Console.WriteLine("     __\n" +
@@ -79,22 +80,22 @@ namespace HelloDungeon
                 Console.WriteLine("What has to be broken before you can use it?");
 
                 //Store the amount of attempts the player has remaining
-                int attemptsRemaining = numberOfAttempts + 1;
+                int attemptsRemaining = (numberOfAttempts + 1) - i;
 
                 //Displays the remaining number of attempts
                 Console.WriteLine("Attempts Remaining: " + attemptsRemaining);
 
                 //Get input for the players guess
                 Console.Write("> ");
-                input = Console.ReadLine();
+                inputReceived = Console.ReadLine();
 
                 //If the player answered correctly...
-                if (input == "egg")
+                if (inputReceived == "egg")
                 {
                     //...print text for feedback and break the loop
                     Console.WriteLine("Congrats! You've gained immortality!");
                     Console.ReadKey();
-                
+                    return;
                 }
 
                 //If the player doesn't answer correctly deal damage to them
@@ -102,16 +103,18 @@ namespace HelloDungeon
                     "you take 5 points of damage.");
                 Console.ReadKey();
                 health -= 5;
-            
 
-            //If the player has died after guessing
-            if (health <= 0)
-            {
-                //...update the player state and print player feedback to the screen
-                playerIsAlive = false;
-                Console.WriteLine("You died...");
-                Console.ReadKey();
-                Console.Clear();
+
+                //If the player has died after guessing
+                if (health <= 0)
+                {
+                    //...update the player state and print player feedback to the screen
+                    playerIsAlive = false;
+                    Console.WriteLine("You died...");
+                    Console.ReadKey();
+                    Console.Clear();
+                    return;
+                }
             }
         }
 
@@ -121,7 +124,7 @@ namespace HelloDungeon
         void DisplayMainMenu()
         {
             //Display question and store input
-            int input = GetInput("Would you like to play again?", "Yes", "No");
+            input = GetInput("Would you like to play again?", "Yes", "No");
 
             //If the player decides to restart...
             if (input == 1)
@@ -156,47 +159,48 @@ namespace HelloDungeon
         /// <param name="option1">The first option the player can choose</param>
         /// <param name="option2">The second option the player can choose</param>
         /// <returns></returns>
-        void GetInput(string description, string option1, string option2)
+        int GetInput(string description, string option1, string option2)
         {
-            string input = "";
+             string input = "";
+             
             int inputReceived = 0;
 
-            //While input is not 1 or 2 display the options
-            while (!(inputReceived == 1 && inputReceived == 2))
-            {
-                //Print options
-                Console.WriteLine(description);
-                Console.WriteLine("1. " + option1);
-                Console.WriteLine("2. " + option2);
-                Console.WriteLine("> ");
-
-                //Get input from player
-                input = Console.ReadLine();
-
-                //If player selected the first option...
-                if (input != "1" || input != option1)
+           
+                //While input is not 1 or 2 display the options
+                while (inputReceived != 1 && inputReceived != 2)
                 {
-                    //Set input received to be the first option
-                    inputReceived = 1;
-                }
-                //Otherwise if the player selected the second option...
-                if (input == "2" && input == option2)
-                {
-                    //Set input received to be the second option
-                    inputReceived = 2;
-                }
-                //If neither are true...
-                else
-                {
-                    //...display error message
-                    Console.WriteLine("Invalid Input");
-                    Console.ReadKey();
-                }
+                    //Print options
+                    Console.WriteLine(description);
+                    Console.WriteLine("1. " + option1);
+                    Console.WriteLine("2. " + option2);
+                    Console.WriteLine("> ");
 
-                Console.Clear();
-            }
+                    //Get input from player
+                    input = Console.ReadLine();
 
-            return inputReceived;
+                    //If player selected the first option...
+                    if (input == "1" || input == option1)
+                    {
+                        //Set input received to be the first option
+                        inputReceived = 1;
+                    }
+                    //Otherwise if the player selected the second option...
+                    else if (input == "2" || input == option2)
+                    {
+                        //Set input received to be the second option
+                        inputReceived = 2;
+                    }
+                    //If neither are true...
+                    else
+                    {
+                        //...display error message
+                        Console.WriteLine("Invalid Input");
+                        Console.ReadKey();
+                    }
+
+                    Console.Clear();
+                }
+                return inputReceived;
         }
 
         public void Run()
@@ -217,7 +221,7 @@ namespace HelloDungeon
                 {
                     Room3();
                 }
-            }
+
                 //If the player lost or beat the game...
                 if (playerIsAlive == false || currentArea == 3)
                 {
@@ -230,7 +234,7 @@ namespace HelloDungeon
                     //...increment the current area
                     currentArea++;
                 }
-            
+            }
         }
     }
 }
